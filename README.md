@@ -1,0 +1,14 @@
+# db-accessor-infra
+
+Shared edge, DNS, and certificate infrastructure for db-accessor.
+
+This repo owns Route 53 hosted zones, ACM certificates, CloudFront, and DNS records. It depends on SSM parameters published by `db-accessor-ui` and `db-accessor`.
+
+## Manual deployment order
+
+1. Deploy `shared-deploy-access-stack` once locally if GitHub Actions will deploy later.
+2. Deploy `shared-dns-stack`.
+3. Update parent NS delegation for the stage domain.
+4. Deploy `shared-certificate-us-east-1-stack` and `shared-certificate-regional-stack`.
+5. Deploy `db-accessor-ui` and `db-accessor` stacks so their SSM parameters exist.
+6. Deploy `shared-edge-stack`.
