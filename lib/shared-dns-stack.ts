@@ -9,6 +9,8 @@ export interface SharedDnsStackProps extends cdk.StackProps {
   domain: string;
 }
 
+const COGNITO_PARENT_VALIDATION_IP = '192.0.2.1';
+
 export class SharedDnsStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: SharedDnsStackProps) {
     super(scope, id, props);
@@ -17,6 +19,12 @@ export class SharedDnsStack extends cdk.Stack {
       zoneName: props.domain,
     });
     const params = sharedParamNames(props.stage);
+
+    new route53.ARecord(this, 'CognitoParentValidationRecord', {
+      zone,
+      target: route53.RecordTarget.fromIpAddresses(COGNITO_PARENT_VALIDATION_IP),
+      ttl: cdk.Duration.minutes(5),
+    });
 
     new ssm.StringParameter(this, 'HostedZoneIdParameter', {
       parameterName: params.hostedZoneId,
