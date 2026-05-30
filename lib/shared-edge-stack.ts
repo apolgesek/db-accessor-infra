@@ -14,9 +14,6 @@ export interface SharedEdgeStackProps extends cdk.StackProps {
 }
 
 const CLOUDFRONT_HOSTED_ZONE_ID = 'Z2FDTNDATAQYW2';
-const CACHING_OPTIMIZED_POLICY_ID = '658327ea-f89d-4fab-a63d-7e88639e58f6';
-const CACHING_DISABLED_POLICY_ID = '413f2a3a-6630-46c3-9b6a-1c1b3d4905f8';
-const ALL_VIEWER_EXCEPT_HOST_HEADER_POLICY_ID = 'b689b0a8-53d0-40ab-baf2-68738e2966ac';
 
 export class SharedEdgeStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: SharedEdgeStackProps) {
@@ -123,7 +120,7 @@ export class SharedEdgeStack extends cdk.Stack {
               functionArn: viewerRequestFunction.attrFunctionArn,
             },
           ],
-          cachePolicyId: CACHING_OPTIMIZED_POLICY_ID,
+          cachePolicyId: cloudfront.CachePolicy.CACHING_OPTIMIZED.cachePolicyId,
         },
         cacheBehaviors: [
           {
@@ -139,8 +136,9 @@ export class SharedEdgeStack extends cdk.Stack {
                 functionArn: viewerRequestFunction.attrFunctionArn,
               },
             ],
-            cachePolicyId: CACHING_DISABLED_POLICY_ID,
-            originRequestPolicyId: ALL_VIEWER_EXCEPT_HOST_HEADER_POLICY_ID,
+            cachePolicyId: cloudfront.CachePolicy.CACHING_DISABLED.cachePolicyId,
+            originRequestPolicyId:
+              cloudfront.OriginRequestPolicy.ALL_VIEWER_EXCEPT_HOST_HEADER.originRequestPolicyId,
           },
         ],
         customErrorResponses: [
