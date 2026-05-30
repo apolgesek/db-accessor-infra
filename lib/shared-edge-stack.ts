@@ -40,10 +40,7 @@ export class SharedEdgeStack extends cdk.Stack {
       this,
       params.websocketRegionalHostedZoneId,
     );
-    const authCloudFrontDomainName = ssm.StringParameter.valueForStringParameter(
-      this,
-      params.authCloudFrontDomainName,
-    );
+    const authCloudFrontDomainName = ssm.StringParameter.valueForStringParameter(this, params.authCloudFrontDomainName);
     const authCloudFrontHostedZoneId = ssm.StringParameter.valueForStringParameter(
       this,
       params.authCloudFrontHostedZoneId,
