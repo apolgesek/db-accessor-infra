@@ -24,6 +24,10 @@ export class SharedEdgeStack extends cdk.Stack {
 
     const params = sharedParamNames(props.stage);
     const hostedZoneId = ssm.StringParameter.valueForStringParameter(this, params.hostedZoneId);
+    const hostedZone = route53.HostedZone.fromHostedZoneAttributes(this, 'StageHostedZone', {
+      hostedZoneId,
+      zoneName: props.domain,
+    });
     const globalCertificateArn = ssm.StringParameter.valueForStringParameter(this, params.globalCertificateArn);
     const frontendBucketName = ssm.StringParameter.valueForStringParameter(this, params.frontendBucketName);
     const frontendBucketRegionalDomainName = ssm.StringParameter.valueForStringParameter(
@@ -186,14 +190,16 @@ export class SharedEdgeStack extends cdk.Stack {
       },
     });
 
-    new route53.CfnRecordSet(this, 'ApexAliasRecord', {
-      hostedZoneId,
-      name: props.domain,
-      type: 'A',
-      aliasTarget: {
-        dnsName: distribution.attrDomainName,
-        hostedZoneId: CLOUDFRONT_HOSTED_ZONE_ID,
-      },
+    new route53.ARecord(this, 'ApexAliasRecord', {
+      zone: hostedZone,
+      recordName: props.domain,
+      target: route53.RecordTarget.fromAlias({
+        bind: () => ({
+          dnsName: distribution.attrDomainName,
+          hostedZoneId: CLOUDFRONT_HOSTED_ZONE_ID,
+        }),
+      }),
+      deleteExisting: true,
     });
     new route53.CfnRecordSet(this, 'AuthAliasRecord', {
       hostedZoneId,
