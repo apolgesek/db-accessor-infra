@@ -48,4 +48,5 @@ new SharedEdgeStack(app, 'shared-edge-stack', {
   stage,
   domain,
   allowedIp: '63.176.89.71',
+  priceClass: 'PriceClass_100',
 });
