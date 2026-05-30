@@ -2,7 +2,7 @@
 import * as cdk from 'aws-cdk-lib';
 import { SharedCertificateRegionalStack } from '../lib/shared-certificate-regional-stack';
 import { SharedCertificateUsEast1Stack } from '../lib/shared-certificate-us-east-1-stack';
-import { SharedDeployAccessStack } from '../lib/shared-deploy-access-stack';
+import { SharedDeployStack } from '../lib/shared-deploy-stack';
 import { SharedDnsStack } from '../lib/shared-dns-stack';
 import { SharedEdgeStack } from '../lib/shared-edge-stack';
 
@@ -17,7 +17,7 @@ const githubOrg = 'apolgesek';
 const githubRepo = 'db-accessor-infra';
 const domain = `${stage}.4eyesdb.com`;
 
-new SharedDeployAccessStack(app, 'shared-deploy-access-stack', {
+new SharedDeployStack(app, 'shared-deploy-stack', {
   env,
   stage,
   projectName,

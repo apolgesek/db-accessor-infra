@@ -6,7 +6,8 @@ This repo owns Route 53 hosted zones, ACM certificates, CloudFront, and DNS reco
 
 ## Manual deployment order
 
-1. Deploy `shared-deploy-access-stack` once locally if GitHub Actions will deploy later.
+1. Deploy `shared-deploy-stack` once locally if GitHub Actions will deploy later.
+   .\cdk-deploy-to.bat 349036690903 eu-central-1 dev shared-deploy-stack --profile apolgesek-dev --require-approval never
 2. Deploy `shared-dns-stack`.
 3. Update parent NS delegation for the stage domain.
 4. Deploy `shared-certificate-us-east-1-stack` and `shared-certificate-regional-stack`.

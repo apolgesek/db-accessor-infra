@@ -1,4 +1,4 @@
-name: Deploy Shared Infra
+name: Deploy Shared Infra Prod
 
 on:
   workflow_dispatch:
@@ -8,7 +8,7 @@ on:
         required: true
         type: choice
         options:
-          - shared-deploy-access-stack
+          - shared-deploy-stack
           - shared-dns-stack
           - shared-certificate-us-east-1-stack
           - shared-certificate-regional-stack
@@ -21,19 +21,18 @@ permissions:
   id-token: write
 
 concurrency:
-  group: shared-infra-${{ inputs.stack }}-${{ vars.STAGE || 'dev' }}
+  group: shared-infra-prod-${{ inputs.stack }}
   cancel-in-progress: false
-
-env:
-  STAGE: ${{ vars.STAGE || 'dev' }}
-  AWS_REGION: ${{ vars.AWS_REGION || 'eu-central-1' }}
-  CDK_ROLE_TO_ASSUME_ARN: ${{ vars.CDK_ROLE_TO_ASSUME_ARN }}
-  STACK: ${{ inputs.stack }}
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment: ${{ vars.STAGE || 'dev' }}
+    environment: prod
+    env:
+      STAGE: prod
+      AWS_REGION: ${{ vars.AWS_REGION || 'eu-central-1' }}
+      CDK_ROLE_TO_ASSUME_ARN: ${{ vars.CDK_ROLE_TO_ASSUME_ARN }}
+      STACK: ${{ inputs.stack }}
     steps:
       - uses: actions/checkout@v4
 
@@ -60,8 +59,8 @@ jobs:
           set -euo pipefail
 
           case "${STACK}" in
-            shared-deploy-access-stack)
-              npx cdk deploy shared-deploy-access-stack --require-approval never --verbose
+            shared-deploy-stack)
+              npx cdk deploy shared-deploy-stack --require-approval never --verbose
               ;;
             shared-dns-stack)
               npx cdk deploy shared-dns-stack --require-approval never --verbose

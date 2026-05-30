@@ -1,0 +1,93 @@
+name: Deploy Shared Infra Dev
+
+on:
+  workflow_dispatch:
+    inputs:
+      stack:
+        description: 'Shared infra stack or stack group to deploy'
+        required: true
+        type: choice
+        options:
+          - shared-deploy-stack
+          - shared-dns-stack
+          - shared-certificate-us-east-1-stack
+          - shared-certificate-regional-stack
+          - shared-edge-stack
+          - all-certificates
+          - all-after-bootstrap
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: shared-infra-dev-${{ inputs.stack }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: dev
+    env:
+      STAGE: dev
+      AWS_REGION: ${{ vars.AWS_REGION || 'eu-central-1' }}
+      CDK_ROLE_TO_ASSUME_ARN: ${{ vars.CDK_ROLE_TO_ASSUME_ARN }}
+      STACK: ${{ inputs.stack }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials for CDK deploy
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.CDK_ROLE_TO_ASSUME_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Deploy selected stack
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          case "${STACK}" in
+            shared-deploy-stack)
+              npx cdk deploy shared-deploy-stack --require-approval never --verbose
+              ;;
+            shared-dns-stack)
+              npx cdk deploy shared-dns-stack --require-approval never --verbose
+              ;;
+            shared-certificate-us-east-1-stack)
+              npx cdk deploy shared-certificate-us-east-1-stack --require-approval never --verbose
+              ;;
+            shared-certificate-regional-stack)
+              npx cdk deploy shared-certificate-regional-stack --require-approval never --verbose
+              ;;
+            shared-edge-stack)
+              npx cdk deploy shared-edge-stack --require-approval never --verbose
+              ;;
+            all-certificates)
+              npx cdk deploy shared-certificate-us-east-1-stack shared-certificate-regional-stack --require-approval never --verbose
+              ;;
+            all-after-bootstrap)
+              npx cdk deploy \
+                shared-dns-stack \
+                shared-certificate-us-east-1-stack \
+                shared-certificate-regional-stack \
+                shared-edge-stack \
+                --require-approval never \
+                --verbose
+              ;;
+            *)
+              echo "::error::Unsupported stack selection: ${STACK}"
+              exit 1
+              ;;
+          esac

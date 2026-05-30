@@ -2,15 +2,15 @@ import * as cdk from 'aws-cdk-lib';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import { Construct } from 'constructs';
 
-export interface SharedDeployAccessStackProps extends cdk.StackProps {
+export interface SharedDeployStackProps extends cdk.StackProps {
   projectName: string;
   githubOrg: string;
   githubRepo: string;
   stage: 'dev' | 'prod';
 }
 
-export class SharedDeployAccessStack extends cdk.Stack {
-  constructor(scope: Construct, id: string, props: SharedDeployAccessStackProps) {
+export class SharedDeployStack extends cdk.Stack {
+  constructor(scope: Construct, id: string, props: SharedDeployStackProps) {
     super(scope, id, props);
 
     const stack = cdk.Stack.of(this);
