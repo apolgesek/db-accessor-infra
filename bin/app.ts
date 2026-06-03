@@ -5,6 +5,7 @@ import { SharedCertificateUsEast1Stack } from '../lib/shared-certificate-us-east
 import { SharedDeployStack } from '../lib/shared-deploy-stack';
 import { SharedDnsStack } from '../lib/shared-dns-stack';
 import { SharedEdgeStack } from '../lib/shared-edge-stack';
+import { SharedFrontendStack } from '../lib/shared-frontend-stack';
 
 const app = new cdk.App();
 const env = {
@@ -15,6 +16,7 @@ const stage = process.env.STAGE as 'dev' | 'prod';
 const projectName = 'db-accessor';
 const githubOrg = 'apolgesek';
 const githubRepo = 'db-accessor-infra';
+const frontendGithubRepo = 'db-accessor-ui';
 const domain = `${stage}.4eyesdb.com`;
 
 new SharedDeployStack(app, 'shared-deploy-stack', {
@@ -29,6 +31,13 @@ new SharedDnsStack(app, 'shared-dns-stack', {
   env,
   stage,
   domain,
+});
+
+new SharedFrontendStack(app, 'shared-frontend-stack', {
+  env,
+  stage,
+  frontendGithubOrg: githubOrg,
+  frontendGithubRepo,
 });
 
 new SharedCertificateUsEast1Stack(app, 'shared-certificate-us-east-1-stack', {
