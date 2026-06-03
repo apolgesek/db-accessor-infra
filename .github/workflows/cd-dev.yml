@@ -10,6 +10,7 @@ on:
         options:
           - shared-deploy-stack
           - shared-dns-stack
+          - shared-frontend-stack
           - shared-certificate-us-east-1-stack
           - shared-certificate-regional-stack
           - shared-edge-stack
@@ -65,6 +66,9 @@ jobs:
             shared-dns-stack)
               npx cdk deploy shared-dns-stack --require-approval never --verbose
               ;;
+            shared-frontend-stack)
+              npx cdk deploy shared-frontend-stack --require-approval never --verbose
+              ;;
             shared-certificate-us-east-1-stack)
               npx cdk deploy shared-certificate-us-east-1-stack --require-approval never --verbose
               ;;
@@ -80,6 +84,7 @@ jobs:
             all-after-bootstrap)
               npx cdk deploy \
                 shared-dns-stack \
+                shared-frontend-stack \
                 shared-certificate-us-east-1-stack \
                 shared-certificate-regional-stack \
                 shared-edge-stack \
