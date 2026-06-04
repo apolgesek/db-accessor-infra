@@ -96,8 +96,8 @@ export class SharedFrontendStack extends cdk.Stack {
         resources: [
           ssmParameterArn(params.frontendBucketName),
           ssmParameterArn(params.cloudFrontDistributionId),
-          ssmParameterArn(`/db-accessor-${props.stage}/auth/authority`),
-          ssmParameterArn(`/db-accessor-${props.stage}/auth/client-id`),
+          ssmParameterArn(params.authIdentityProviderName),
+          ssmParameterArn(`/db-accessor-${props.stage}/auth/*`),
         ],
       }),
     );
