@@ -10,6 +10,7 @@ export interface SharedParamNames {
   websocketRegionalHostedZoneId: string;
   authCloudFrontDomainName: string;
   authCloudFrontHostedZoneId: string;
+  authIdentityProviderName: string;
   cloudFrontDistributionId: string;
   cloudFrontDomainName: string;
 }
@@ -27,6 +28,7 @@ export function sharedParamNames(stage: string): SharedParamNames {
     websocketRegionalHostedZoneId: `/db-accessor-${stage}/websocket/regional-hosted-zone-id`,
     authCloudFrontDomainName: `/db-accessor-${stage}/auth/cloudfront-domain-name`,
     authCloudFrontHostedZoneId: `/db-accessor-${stage}/auth/cloudfront-hosted-zone-id`,
+    authIdentityProviderName: `/db-accessor-${stage}/auth/identity-provider-name`,
     cloudFrontDistributionId: `/db-accessor-infra-${stage}/cloudfront/distribution-id`,
     cloudFrontDomainName: `/db-accessor-infra-${stage}/cloudfront/domain-name`,
   };
