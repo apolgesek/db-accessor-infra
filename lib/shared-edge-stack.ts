@@ -61,7 +61,7 @@ export class SharedEdgeStack extends cdk.Stack {
       name: `db-accessor-${props.stage}-viewer-request`,
       autoPublish: true,
       functionConfig: {
-        comment: 'Restrict dev access and normalize API paths',
+        comment: 'Restrict access, normalize API paths and rewrite frontend routes',
         runtime: 'cloudfront-js-2.0',
       },
       functionCode: `function handler(event) {
@@ -80,6 +80,23 @@ export class SharedEdgeStack extends cdk.Stack {
     request.uri = '/';
   } else if (request.uri.indexOf('/api/') === 0) {
     request.uri = request.uri.substring(4);
+  } else if (request.method === 'GET' || request.method === 'HEAD') {
+    // Serve the SPA only for HTML navigation, without knowing Angular routes.
+    var accept = request.headers.accept ? request.headers.accept.value : '';
+    var acceptsHtml = accept.split(',').some(function (mediaType) {
+      var parameters = mediaType.toLowerCase().split(';');
+      if (parameters[0].trim() !== 'text/html') return false;
+      return parameters.slice(1).every(function (parameter) {
+        var parts = parameter.trim().split('=');
+        return parts[0].trim() !== 'q' || Number(parts[1]) > 0;
+      });
+    });
+    var pathParts = request.uri.split('/');
+    var assetRoots = ['assets', 'media', '.well-known'];
+    var isAsset = assetRoots.indexOf(pathParts[1]) !== -1 || pathParts[pathParts.length - 1].indexOf('.') !== -1;
+    if (acceptsHtml && !isAsset) {
+      request.uri = '/index.html';
+    }
   }
 
   return request;
@@ -144,10 +161,6 @@ export class SharedEdgeStack extends cdk.Stack {
             originRequestPolicyId:
               cloudfront.OriginRequestPolicy.ALL_VIEWER_EXCEPT_HOST_HEADER.originRequestPolicyId,
           },
-        ],
-        customErrorResponses: [
-          { errorCode: 403, responseCode: 200, responsePagePath: '/index.html' },
-          { errorCode: 404, responseCode: 200, responsePagePath: '/index.html' },
         ],
         viewerCertificate: {
           acmCertificateArn: globalCertificateArn,
