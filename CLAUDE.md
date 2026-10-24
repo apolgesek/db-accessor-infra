@@ -70,3 +70,15 @@ Default vocabulary: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-
 ### Domain docs
 
 Single-context, using the shared glossary and ADRs in sibling `db-accessor` plus any repo-local `docs/adr/`. See `docs/agents/domain.md`.
+
+### Specs
+
+A spec's "Implementation Decisions" must let a reader who has not seen the conversation understand the building blocks:
+
+- Module map: each new or changed module's responsibility, public interface, and dependencies.
+- Data schema: stored records, keys, and the conditions that guard writes.
+- API contracts: routes or events, payloads, and error cases with their codes.
+- Key interaction sequences, step by step, including failure and concurrency paths.
+- A component diagram, plus sequence diagrams where an interaction spans more than two modules.
+
+Describe modules by name and responsibility, not file paths. Include a state machine, type shape, or schema snippet when it states a decision more precisely than prose.
