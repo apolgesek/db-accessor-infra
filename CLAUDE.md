@@ -34,6 +34,7 @@ Work from the repo root. This repo owns shared DNS, certificates, CloudFront, th
 - Follow `README.md` for first deployment: deploy role if needed → DNS and parent NS delegation → frontend bucket → certificates → backend API/auth parameters → edge. Stacks exchange SSM values rather than explicit CDK dependencies; deploying all stacks does not establish prerequisites automatically.
 - `cdk-deploy-to.ps1`/`.bat` accept account, region, stage, then CDK deploy arguments. `.github/workflows/cd-dev.yml` and `cd-prod.yml` are manual workflows with stack selection.
 - Preserve resource IDs, parameter names, OIDC trust scope, and stage-specific retention unless the task calls for changes. The frontend bucket is versioned; dev allows automatic deletion, while prod retains it.
+- Write evergreen comments: what the code alone cannot tell a future reader (intent, constraints, non-obvious reasons). Put the history of a change (an earlier bug, a rejected alternative, a decision reached in conversation) in the commit message or PR description.
 - Keep changes focused and preserve unrelated work. Do not commit, deploy, or open PRs unless explicitly asked. Prefer source pointers and README deployment details over duplicated configuration values or task logs in this guide.
 
 ## Pull request descriptions
